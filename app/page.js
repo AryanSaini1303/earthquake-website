@@ -8,12 +8,12 @@ export default function ESP32DataViewer() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const start = performance.now(); // Start timer
+      const start = Date.now(); // ✅ Correct usage
 
       try {
         const res = await fetch("/api/receiveData");
         const json = await res.json();
-        const end = performance.now(); // End timer
+        const end = Date.now(); // ✅
 
         setData(json.data);
         setResponseTime((end - start).toFixed(2)); // in ms

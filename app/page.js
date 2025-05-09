@@ -8,9 +8,8 @@ export default function ESP32DataViewer() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const start = Date.now(); // ✅ Correct usage
-
       try {
+        const start = Date.now(); // ✅ Correct usage
         const res = await fetch("/api/receiveData");
         const json = await res.json();
         const end = Date.now(); // ✅

@@ -7,21 +7,33 @@ export default function ESP32DataViewer() {
   const [responseTime, setResponseTime] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const start = Date.now(); // ✅ Correct usage
-        const res = await fetch("/api/receiveData");
-        const json = await res.json();
-        const end = Date.now(); // ✅
+    let isMounted = true;
 
-        setData(json.data);
-        setResponseTime((end - start).toFixed(2)); // in ms
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
+    const fetchLoop = async () => {
+      while (isMounted) {
+        const start = Date.now();
+        try {
+          const res = await fetch("/api/receiveData");
+          const json = await res.json();
+          const end = Date.now();
+
+          if (isMounted) {
+            setData(json.data);
+            setResponseTime((end - start).toFixed(2));
+          }
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 100)); // wait 100ms before next loop
       }
-    }, 100); // every 100ms
+    };
 
-    return () => clearInterval(interval);
+    fetchLoop(); // start the loop
+
+    return () => {
+      isMounted = false; // stop the loop on component unmount
+    };
   }, []);
 
   return (

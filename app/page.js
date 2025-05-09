@@ -25,7 +25,7 @@ export default function ESP32DataViewer() {
           console.error("Failed to fetch data:", error);
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 100)); // wait 100ms before next loop
+        await new Promise((resolve) => setTimeout(resolve, 50)); // wait 100ms before next loop
       }
     };
 

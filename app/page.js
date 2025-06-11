@@ -62,6 +62,7 @@ const EarthquakeDisplay = () => {
           </ResponsiveContainer>
         </div>
       )}
+      <h1 style={{textAlign:'right'}}>{(new Date).toLocaleTimeString()}</h1>
     </div>
   );
 };

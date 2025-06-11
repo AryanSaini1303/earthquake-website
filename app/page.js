@@ -19,7 +19,7 @@ const EarthquakeDisplay = () => {
   // Flatten the array of arrays
   const flatData = data.flat().map((item) => ({
     ...item,
-    ts: new Date(item.ts).toLocaleTimeString(),
+    ts: new Date(item.ts).toISOString().split('T')[1].split('.')[0],
     z: item.z - 240000, // tweak these if lines collide
     x: item.x + 19000, // tweak these if lines collide
   }));

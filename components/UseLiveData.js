@@ -34,9 +34,9 @@ const useLiveData = () => {
     });
   }, []);
 
-//   useEffect(() => {
-//     console.log(data);
-//   }, [data]);
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
 
   return data;
 };

@@ -91,7 +91,7 @@ const EarthquakeDisplay = () => {
           console.log('Anomaly detected:', item);
           soundRef.current.play();
         }
-        return item;
+        // return item;
       });
     }
   }, [averageValues, flatData]);
@@ -134,7 +134,7 @@ const EarthquakeDisplay = () => {
           </ResponsiveContainer>
         </div>
       )}
-      <h1 style={{ textAlign: 'right' }}>{new Date().toLocaleTimeString()}</h1>
+      <h1 style={{ textAlign: 'right' }} suppressHydrationWarning>{new Date().toLocaleTimeString()}</h1>
     </div>
   );
 };

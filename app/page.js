@@ -68,7 +68,7 @@ const EarthquakeDisplay = () => {
         averageValues.x /= 500;
         averageValues.y /= 500;
         averageValues.z /= 500;
-        // console.log(averageValues);
+        console.log(averageValues);
         setAverageValues(averageValues);
         // setInitialValues((prev) => [...prev.slice(-499), averageValues]);
       }

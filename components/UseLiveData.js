@@ -13,10 +13,16 @@ const useLiveData = () => {
       timeZone: 'UTC',
     });
     const samay = date.getUTCHours();
-    console.log(`EQ/${taarik}/${samay === 0 ? `${samay}${samay}` : samay}`);
+    // console.log(
+    //   `EQ/${taarik}/${
+    //     samay === 0 ? `${samay}${samay}` : samay < 10 ? `0${samay}` : samay
+    //   }`,
+    // );
     const dataRef = ref(
       database,
-      `EQ/${taarik}/${samay === 0 ? `${samay}${samay}` : samay}`,
+      `EQ/${taarik}/${
+        samay === 0 ? `${samay}${samay}` : samay < 10 ? `0${samay}` : samay
+      }`,
     );
     // Load existing data once
     onValue(dataRef, (snapshot) => {

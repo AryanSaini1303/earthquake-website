@@ -2,7 +2,6 @@
 
 import UseLiveData from '/components/UseLiveData';
 import styles from './page.module.css';
-
 import {
   LineChart,
   Line,
@@ -12,13 +11,14 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { Howl, Howler } from 'howler';
 
 const EarthquakeDisplay = () => {
   const data = UseLiveData(); // live hook
   const [initialValues, setInitialValues] = useState([]);
   const [averageValues, setAverageValues] = useState({});
+  const soundRef = useRef(null);
 
   // Flatten the array of arrays
   const flatData = data.flat().map((item) => ({
@@ -27,6 +27,28 @@ const EarthquakeDisplay = () => {
     z: item.z - 240000,
     x: item.x + 19000,
   }));
+
+  useEffect(() => {
+  soundRef.current = new Howl({ src: ['/sounds/beep-warning-2.mp3'] });
+  const unlockAudio = () => {
+    if (Howler.ctx && Howler.ctx.state === 'suspended') {
+      Howler.ctx.resume().then(() => {
+        console.log("🔓 AudioContext unlocked");
+      });
+    }
+    document.removeEventListener("click", unlockAudio);
+    document.removeEventListener("touchstart", unlockAudio);
+    document.removeEventListener("keydown", unlockAudio);
+  };
+  document.addEventListener("click", unlockAudio);
+  document.addEventListener("touchstart", unlockAudio);
+  document.addEventListener("keydown", unlockAudio);
+  return () => {
+    document.removeEventListener("click", unlockAudio);
+    document.removeEventListener("touchstart", unlockAudio);
+    document.removeEventListener("keydown", unlockAudio);
+  };
+}, []);
 
   useEffect(() => {
     if (Object.keys(averageValues).length === 0) {
@@ -60,11 +82,14 @@ const EarthquakeDisplay = () => {
       // console.table(flatData)
       flatData.map((item) => {
         if (
-          (item.x > averageValues.x + 2500 || item.x < averageValues.x - 2500) &&
-          (item.y > averageValues.y + 2500 || item.y < averageValues.y - 2500) &&
+          (item.x > averageValues.x + 2500 ||
+            item.x < averageValues.x - 2500) &&
+          (item.y > averageValues.y + 2500 ||
+            item.y < averageValues.y - 2500) &&
           (item.z > averageValues.z + 2500 || item.z < averageValues.z - 2500)
         ) {
           console.log('Anomaly detected:', item);
+          soundRef.current.play();
         }
         return item;
       });

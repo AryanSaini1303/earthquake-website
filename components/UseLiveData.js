@@ -1,50 +1,67 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { database } from '/lib/firebaseConfig';
-import { ref, onChildAdded, onValue } from 'firebase/database';
+import { ref, onChildAdded, off } from 'firebase/database';
+
+const MINUTES = 0.25 * 60 * 1000;
 
 const useLiveData = () => {
   const [data, setData] = useState([]);
+  const dataRefRef = useRef(null);
 
   useEffect(() => {
     const date = new Date();
+
     const taarik = new Date().toLocaleDateString('en-CA', {
       timeZone: 'UTC',
     });
-    const samay = date.getUTCHours();
-    // console.log(
-    //   `EQ/${taarik}/${
-    //     samay === 0 ? `${samay}${samay}` : samay < 10 ? `0${samay}` : samay
-    //   }`,
-    // );
-    const dataRef = ref(
-      database,
-      `EQ/${taarik}/${
-        samay === 0 ? `${samay}${samay}` : samay < 10 ? `0${samay}` : samay
-      }`,
-    );
-    // Load existing data once
-    onValue(dataRef, (snapshot) => {
-      const allData = snapshot.val();
-      if (allData) {
-        const values = Object.values(allData);
-        setData(values.slice(-1));
-      }
-    });
 
-    // Listen for new entries
+    const samay = date.getUTCHours();
+    const formattedHour = samay === 0 ? '00' : samay < 10 ? `0${samay}` : samay;
+
+    const dataRef = ref(database, `${taarik}/${formattedHour}`);
+    dataRefRef.current = dataRef;
+
     onChildAdded(dataRef, (snapshot) => {
       const newData = snapshot.val();
-      setData((prev) => [...prev.slice(-99), newData]);
+      if (!newData) return;
+      const now = Date.now();
+      setData((prev) => {
+        const newItems = Array.isArray(newData) ? newData : [newData];
+        const merged = [...prev, ...newItems];
+        const filtered = merged.filter((item) => {
+          const ts = new Date(item.ts).getTime();
+          return now - ts <= MINUTES;
+        });
+        return filtered;
+      });
     });
+
+    return () => {
+      if (dataRefRef.current) {
+        off(dataRefRef.current);
+      }
+    };
   }, []);
 
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData((prev) => {
+        if (!prev.length) return [];
+        const now = Date.now();
+        const filtered = prev.filter((item) => {
+          const ts = new Date(item.ts).getTime();
+          return now - ts <= MINUTES;
+        });
+        return filtered;
+      });
+    }, 500); // runs every 0.5 sec
+    return () => clearInterval(interval);
+  }, []);
 
-  return data;
+  // console.log(data)
+  return data || [];
 };
 
 export default useLiveData;

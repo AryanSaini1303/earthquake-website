@@ -1,0 +1,130 @@
+
+.popup :global(.leaflet-popup-content-wrapper) {
+  border-radius: 14px;
+  border: 1px solid rgba(4, 13, 26, 0.08);
+  box-shadow: 0 8px 32px rgba(4, 13, 26, 0.12);
+  padding: 0;
+  overflow: hidden;
+}
+
+.popup :global(.leaflet-popup-content) {
+  margin: 0;
+  width: 260px !important;
+}
+
+.popup :global(.leaflet-popup-tip-container) {
+  margin-top: -1px;
+}
+
+.popupInner {
+  padding: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.popupId {
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #040D1A;
+  letter-spacing: 0.3px;
+}
+
+.popupBadge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.badgeLive {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16A34A;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.badgeSim {
+  background: rgba(4, 13, 26, 0.05);
+  color: #5A6880;
+  border: 1px solid rgba(4, 13, 26, 0.08);
+}
+
+.popupLocation {
+  font-size: 14px;
+  font-weight: 600;
+  color: #040D1A;
+  margin-bottom: 3px;
+}
+
+.popupDept {
+  font-size: 12px;
+  color: #5A6880;
+  margin-bottom: 16px;
+}
+
+.popupRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(4, 13, 26, 0.07);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.popupRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(4, 13, 26, 0.06);
+  gap: 8px;
+}
+
+.popupRow:last-child { border-bottom: none; }
+
+.popupRow span:first-child {
+  color: #5A6880;
+  flex-shrink: 0;
+}
+
+.popupRow span:last-child {
+  color: #040D1A;
+  font-weight: 500;
+  text-align: right;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+}
+
+.valGreen { color: #16A34A !important; }
+.valMuted { color: #5A6880 !important; }
+
+.popupBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 0;
+  background: #040D1A;
+  color: #fff;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.popupBtn:hover { background: #1B4FD8; }
+.popupBtn i { font-size: 14px; }

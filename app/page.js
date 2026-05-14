@@ -419,7 +419,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={styles.cta}>
+      <section className={styles.cta} id="contact">
         <div className={styles.sectionInner}>
           <div className={styles.ctaInner}>
             <div className={styles.ctaLeft}>

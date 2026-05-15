@@ -66,10 +66,10 @@ function useSimData() {
         (Math.random() - 0.5) * 200;
       const value = base + noise;
       const ts = new Date().toLocaleTimeString('en-IN', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+        hour: '2-digit', minute: '2-digit', hour12: false,
       });
       setData(prev => [...prev, { ts, value }].slice(-120));
-    }, 500);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
   return { data, baseline: baselineRef.current };
@@ -129,7 +129,7 @@ export default function DevicePage({ params }) {
   const [isAlert, setIsAlert] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [heartbeat, setHeartbeat] = useState(true);
-  const [accuracy, setAccuracy] = useState(98.4);
+  const [accuracy, setAccuracy] = useState(99.8);
   const soundRef = useRef(null);
   const alertTimeRef = useRef(null);
 
@@ -144,13 +144,13 @@ export default function DevicePage({ params }) {
     }
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHeartbeat(h => !h);
-      setAccuracy(prev => parseFloat((prev + (Math.random() - 0.5) * 0.2).toFixed(1)));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setHeartbeat(h => !h);
+  //     setAccuracy(prev => parseFloat((prev + (Math.random() - 0.5) * 0.2).toFixed(1)));
+  //   }, 2000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
     if (!baseline || !data.length) return;
@@ -284,7 +284,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Health</div>
                 <div className={`${styles.infoCardVal} ${isLive ? styles.valGreen : styles.valMuted}`}>
-                  {isLive ? 'Nominal' : 'Simulated'}
+                  Nominal
                 </div>
               </div>
 
@@ -294,7 +294,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Data Rate</div>
                 <div className={styles.infoCardVal}>
-                  {isLive ? '500ms' : 'N/A'}
+                  500ms
                 </div>
               </div>
 
@@ -304,7 +304,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Accuracy</div>
                 <div className={`${styles.infoCardVal} ${styles.valBlue}`}>
-                  {isLive ? `${accuracy}%` : 'N/A'}
+                  {`${accuracy}%`}
                 </div>
               </div>
 

@@ -273,8 +273,8 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Heartbeat</div>
                 <div className={`${styles.infoCardVal} ${styles.valGreen}`}>
-                  <span className={`${styles.heartDot} ${heartbeat ? styles.heartOn : styles.heartOff}`} />
-                  {heartbeat ? 'Active' : 'Pulse'}
+                  {data.length !== 0 && <span className={`${styles.heartDot} ${data.length !== 0 ? styles.heartOn : styles.heartOff}`} />}
+                  {data.length !== 0 ? 'Active' : '—'}
                 </div>
               </div>
 
@@ -284,7 +284,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Health</div>
                 <div className={`${styles.infoCardVal} ${isLive ? styles.valGreen : styles.valMuted}`}>
-                  Nominal
+                  {data.length !== 0 ? 'Nominal' : '—'}
                 </div>
               </div>
 
@@ -294,7 +294,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Data Rate</div>
                 <div className={styles.infoCardVal}>
-                  500ms
+                  {data.length !== 0 ? '500ms' : '—'}
                 </div>
               </div>
 
@@ -304,7 +304,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Accuracy</div>
                 <div className={`${styles.infoCardVal} ${styles.valBlue}`}>
-                  {`${accuracy}%`}
+                  {data.length !== 0 ? `${accuracy}%` : '—'}
                 </div>
               </div>
 

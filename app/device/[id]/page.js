@@ -12,39 +12,39 @@ import {
 } from 'recharts';
 
 const DEVICE_META = {
-  'EEWS-001': {
-    location: 'IIT Roorkee, Uttarakhand',
-    dept: 'Seismology Department',
-    coords: '29.8644°N, 77.8964°E',
+  'EQ-Alert_Demo': {
+    location: 'Gurgaon, Haryana',
+    dept: 'Office',
+    coords: '28.3996°N, 77.0386°E',
     zone: 'Seismic Zone IV',
-    elevation: '274m ASL',
-    installed: 'January 2025',
+    elevation: '237m ASL',
+    installed: 'August 2026',
     status: 'live',
   },
-  'EEWS-002': {
-    location: 'New Delhi, NCR',
+  'EQ-Alert_001': {
+    location: 'Bahraich, Uttar Pradesh',
     dept: 'Zone IV Seismic Region',
-    coords: '28.6139°N, 77.2090°E',
+    coords: '27.5743°N, 81.5817°E',
     zone: 'Seismic Zone IV',
-    elevation: '216m ASL',
-    installed: 'March 2025',
+    elevation: '126m ASL',
+    installed: 'March 2026',
     status: 'sim',
   },
-  'EEWS-003': {
-    location: 'Dehradun, Uttarakhand',
+  'EQ-Alert_002': {
+    location: 'Dindoli, Surat, Gujarat',
     dept: 'Himalayan Foothills Zone',
-    coords: '30.3165°N, 78.0322°E',
-    zone: 'Seismic Zone IV',
-    elevation: '640m ASL',
-    installed: 'November 2025',
+    coords: '21.1500°N, 72.8620°E',
+    zone: 'Seismic Zone III',
+    elevation: '13m ASL',
+    installed: 'March 2026',
     status: 'sim',
   },
-  'EEWS-004': {
-    location: 'Shimla, Himachal Pradesh',
+  'EQ-Alert_003': {
+    location: 'Jagdeeshpur, Uttar Pradesh',
     dept: 'High-Risk Seismic Zone V',
-    coords: '31.1048°N, 77.1734°E',
-    zone: 'Seismic Zone V',
-    elevation: '2206m ASL',
+    coords: '26.4555°N, 81.6153°E',
+    zone: 'Seismic Zone III',
+    elevation: '70m ASL',
     installed: 'January 2026',
     status: 'sim',
   },

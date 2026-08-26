@@ -6,12 +6,12 @@ import styles from './page.module.css';
 
 const DEVICES = [
   {
-    id: 'EEWS-001',
-    lat: 29.8644,
-    lng: 77.8964,
-    location: 'IIT Roorkee, Uttarakhand',
-    dept: 'Seismology Department',
-    coords: '29.8644°N, 77.8964°E',
+    id: 'EQ-Alert_Demo',
+    lat: 28.3996,
+    lng: 77.0386,
+    location: 'Gurgaon, Haryana',
+    dept: 'Office',
+    coords: '28.3996°N, 77.0386°E',
     status: 'live',
     statusLabel: 'Live',
     detail: 'Transmitting · All systems nominal',
@@ -19,43 +19,43 @@ const DEVICES = [
     dataRate: '500ms',
   },
   {
-    id: 'EEWS-002',
-    lat: 28.6139,
-    lng: 77.2090,
-    location: 'New Delhi, NCR',
+    id: 'EQ-Alert_001',
+    lat: 27.5743,
+    lng: 81.5817,
+    location: 'Bahraich, Uttar Pradesh',
     dept: 'Zone IV Seismic Region',
-    coords: '28.6139°N, 77.2090°E',
+    coords: '27.5743°N, 81.5817°E',
     status: 'live',
     statusLabel: 'Live',
     detail: 'Transmitting · All systems nominal',
     health: 'Nominal',
-    dataRate: '500ms',
+    dataRate: 'N/A',
   },
   {
-    id: 'EEWS-003',
-    lat: 30.3165,
-    lng: 78.0322,
-    location: 'Dehradun, Uttarakhand',
+    id: 'EQ-Alert_002',
+    lat: 21.1500,
+    lng: 72.8620,
+    location: 'Dindoli, Surat, Gujarat',
     dept: 'Himalayan Foothills Zone',
-    coords: '30.3165°N, 78.0322°E',
+    coords: '21.1500°N, 72.8620°E',
     status: 'live',
     statusLabel: 'Live',
     detail: 'Transmitting · All systems nominal',
     health: 'Nominal',
-    dataRate: '500ms',
+    dataRate: 'N/A',
   },
   {
-    id: 'EEWS-004',
-    lat: 31.1048,
-    lng: 77.1734,
-    location: 'Shimla, Himachal Pradesh',
+    id: 'EQ-Alert_003',
+    lat: 26.4555,
+    lng: 81.6153,
+    location: 'Jagdeeshpur, Uttar Pradesh',
     dept: 'High-Risk Seismic Zone V',
-    coords: '31.1048°N, 77.1734°E',
+    coords: '26.4555°N, 81.6153°E',
     status: 'live',
     statusLabel: 'Live',
     detail: 'Transmitting · All systems nominal',
     health: 'Nominal',
-    dataRate: '500ms',
+    dataRate: 'N/A',
   },
 ];
 
@@ -86,11 +86,11 @@ export default function MapPage() {
 
         <div className={styles.navRight}>
           <div className={styles.navStatus}>
-            <i className={`ti ti-shield`} aria-hidden="true" style={{ fontSize: '18px' }}/>
+            <i className={`ti ti-shield`} aria-hidden="true" style={{ fontSize: '18px' }} />
             EEWS LIVE
           </div>
           <Link href="/" className={styles.navBack}>
-            <i className="ti ti-arrow-left" aria-hidden="true"/>
+            <i className="ti ti-arrow-left" aria-hidden="true" />
             Home
           </Link>
         </div>

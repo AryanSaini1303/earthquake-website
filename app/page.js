@@ -6,37 +6,37 @@ import { useEffect, useRef } from "react";
 
 const DEVICES = [
   {
-    id: "EEWS-001",
-    location: "IIT Roorkee, Uttarakhand",
-    dept: "Seismology Department",
-    coords: "29.8644°N, 77.8964°E",
+    id: "EQ-Alert_Demo",
+    location: "Gurgaon, Haryana",
+    dept: "Office",
+    coords: "28.3996°N, 77.0386°E",
     status: "live",
     statusLabel: "Live",
     detail: "Transmitting · All systems nominal",
   },
   {
-    id: "EEWS-002",
-    location: "New Delhi, NCR",
+    id: "EQ-Alert_001",
+    location: "Bahraich, Uttar Pradesh",
     dept: "Zone IV Seismic Region",
-    coords: "28.6139°N, 77.2090°E",
+    coords: "27.5743°N, 81.5817°E",
     status: "live",
     statusLabel: "Live",
     detail: "Transmitting · All systems nominal",
   },
   {
-    id: "EEWS-003",
-    location: "Dehradun, Uttarakhand",
+    id: "EQ-Alert_002",
+    location: "Dindoli, Surat, Gujarat",
     dept: "Himalayan Foothills Zone",
-    coords: "30.3165°N, 78.0322°E",
+    coords: "21.1500°N, 72.8620°E",
     status: "live",
     statusLabel: "Live",
     detail: "Transmitting · All systems nominal",
   },
   {
-    id: "EEWS-004",
-    location: "Shimla, Himachal Pradesh",
+    id: "EQ-Alert_003",
+    location: "Jagdeeshpur, Uttar Pradesh",
     dept: "High-Risk Seismic Zone V",
-    coords: "31.1048°N, 77.1734°E",
+    coords: "26.4555°N, 81.6153°E",
     status: "live",
     statusLabel: "Live",
     detail: "Transmitting · All systems nominal",
@@ -102,7 +102,7 @@ export default function HomePage() {
             <div className={styles.logoName}>
               Inventis<span>Labs</span>
             </div>
-            <div className={styles.logoSub}>IIT ROORKEE INCUBATED</div>
+            <div className={styles.logoSub}>IIIT LUCKNOW INCUBATED</div>
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export default function HomePage() {
           <a href="#about">About</a>
           <a href="#device">Technology</a>
           <a href="#network">Network</a>
-          <a href="#contact">Contact</a>
+          <a href="/contact">Contact</a>
         </div>
 
         <div className={styles.navRight}>
@@ -142,9 +142,9 @@ export default function HomePage() {
         <div className={styles.heroInner}>
           <div className={styles.heroLeft}>
             <div className={styles.eyebrow}>
-              <span className={styles.eyebrowPill}>EEWS — Gen 1</span>
+              <span className={styles.eyebrowPill}>EQ-Alert — Gen 1</span>
               <span className={styles.eyebrowDash} />
-              <span className={styles.eyebrowTxt}>IIT Roorkee Incubated</span>
+              <span className={styles.eyebrowTxt}>IIIT Lucknow Incubated</span>
             </div>
 
             <h1 className={styles.heroTitle}>
@@ -188,10 +188,10 @@ export default function HomePage() {
                 <i className="ti ti-building-community" aria-hidden="true" />
               </div>
               <div>
-                <div className={styles.iitTitle}>Incubated at IIT Roorkee</div>
+                <div className={styles.iitTitle}>Incubated at IIIT Lucknow</div>
                 <div className={styles.iitSub}>
                   India&apos;s oldest technical institution. InventisLabs is
-                  backed by IIT Roorkee&apos;s incubation programme — validating
+                  backed by IIIT Lucknow&apos;s incubation programme — validating
                   the science behind EEWS.
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function HomePage() {
             <div className={styles.statusCard}>
               <div className={styles.statusHeader}>
                 <span className={styles.statusTitle}>
-                  EEWS-001 // Device Status
+                  EQ-Alert_001 // Device Status
                 </span>
                 <span className={styles.liveBadge}>
                   <span className={styles.liveDot} />
@@ -212,7 +212,7 @@ export default function HomePage() {
                   {
                     icon: "ti-map-pin",
                     key: "Location",
-                    val: "IIT Roorkee, Uttarakhand",
+                    val: "Bahraich, Uttar Pradesh",
                     cls: styles.valBlue,
                   },
                   {
@@ -493,11 +493,11 @@ export default function HomePage() {
               <div className={`${styles.logoName} ${styles.logoNameLight}`}>
                 Inventis<span>Labs</span>
               </div>
-              <div className={styles.footerIit}>Incubated at IIT Roorkee</div>
+              <div className={styles.footerIit}>Incubated at IIIT Lucknow</div>
             </div>
           </div>
           <div className={styles.footerText}>
-            © 2025 InventisLabs · EEWS v1.0 · India&apos;s first Indigenous
+            © 2025 InventisLabs · EQ-Alert v1.0 · India&apos;s first Indigenous
             Earthquake Early Warning System
           </div>
         </div>

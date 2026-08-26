@@ -318,22 +318,22 @@ export default function DevicePage({ params }) {
                 {
                   icon: 'ti-timeline',
                   title: 'What you\'re seeing',
-                  desc: 'The graph shows vibration intensity over the last 15 seconds — calculated from the device\'s 3-axis accelerometer readings combined into a single magnitude value.',
+                  desc: 'The graph shows vibration intensity from the last ~60 seconds — the device\'s 3-axis accelerometer readings (X, Y, Z) combined into a single magnitude value via √(x² + y² + z²).',
                 },
                 {
                   icon: 'ti-minus',
                   title: 'The baseline',
-                  desc: 'The dashed line is the adaptive baseline — the average "quiet" reading established from the first 500 data points. A stable site stays close to this line.',
+                  desc: 'The dashed line is the adaptive baseline — the average "quiet" reading calculated from this device\'s first 500 live readings after coming online. A stable site stays close to this line.',
                 },
                 {
                   icon: 'ti-alert-triangle',
                   title: 'When alerts trigger',
-                  desc: 'If the reading rises or drops more than 5,000 units from baseline, an anomaly is flagged. This may indicate seismic activity, and operators are alerted immediately.',
+                  desc: 'If a reading rises or drops more than 5,000 units from baseline, an anomaly is flagged. This may indicate seismic activity, and operators are alerted immediately.',
                 },
                 {
                   icon: 'ti-clock',
                   title: 'Update frequency',
-                  desc: 'Data refreshes every 500 milliseconds — giving you a near real-time view of ground motion at the deployment site.',
+                  desc: 'Live readings arrive roughly every 500 milliseconds, giving a near real-time view of ground motion at the deployment site.',
                 },
               ].map((item, i) => (
                 <div key={i} className={styles.explainItem}>

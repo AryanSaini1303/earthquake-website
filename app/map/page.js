@@ -7,11 +7,11 @@ import styles from './page.module.css';
 const DEVICES = [
   {
     id: 'EQ-Alert_Demo',
-    lat: 28.3996,
-    lng: 77.0386,
-    location: 'Gurgaon, Haryana',
+    lat: 26.9442,
+    lng: 80.9402,
+    location: 'Lucknow, India',
     dept: 'Office',
-    coords: '28.3996°N, 77.0386°E',
+    coords: '26.9442°N, 80.9402°E',
     status: 'live',
     statusLabel: 'Live',
     detail: 'Transmitting · All systems nominal',

@@ -7,9 +7,9 @@ import { useEffect, useRef } from "react";
 const DEVICES = [
   {
     id: "EQ-Alert_Demo",
-    location: "Gurgaon, Haryana",
+    location: "Lucknow, India",
     dept: "Office",
-    coords: "28.3996°N, 77.0386°E",
+    coords: "26.9442°N, 80.9402°E",
     status: "live",
     statusLabel: "Live",
     detail: "Transmitting · All systems nominal",

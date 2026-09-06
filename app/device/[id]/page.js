@@ -13,11 +13,11 @@ import {
 
 const DEVICE_META = {
   'EQ-Alert_Demo': {
-    location: 'Gurgaon, Haryana',
+    location: 'Lucknow, India',
     dept: 'Office',
-    coords: '28.3996°N, 77.0386°E',
+    coords: '26.9442°N, 80.9402°E',
     zone: 'Seismic Zone IV',
-    elevation: '237m ASL',
+    elevation: '123m ASL',
     installed: 'August 2026',
     status: 'live',
   },

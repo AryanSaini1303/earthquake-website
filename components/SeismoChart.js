@@ -53,6 +53,7 @@ export default function SeismoChart({ data, baseline, isAlert = false }) {
           dataKey="ts"
           tick={AXIS_TICK}
           interval="preserveStartEnd"
+          minTickGap={56}
           axisLine={false}
           tickLine={false}
         />

@@ -35,6 +35,10 @@ export default function MapPage() {
             <i className={`ti ti-shield`} aria-hidden="true" style={{ fontSize: '18px' }} />
             EEWS LIVE
           </div>
+          <Link href="/triangulation" className={styles.navBack}>
+            <i className="ti ti-triangle" aria-hidden="true" />
+            Triangulation
+          </Link>
           <Link href="/" className={styles.navBack}>
             <i className="ti ti-arrow-left" aria-hidden="true" />
             Home

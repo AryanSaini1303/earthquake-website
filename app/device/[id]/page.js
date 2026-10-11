@@ -4,131 +4,28 @@ import { use } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
-import UseLiveData from '/components/UseLiveData';
-import { getDevice, hasFirebaseFeed, SITE } from '@/lib/devices';
-import { Howl } from 'howler';
-import {
-  LineChart, Line, XAxis, YAxis,
-  Tooltip, ResponsiveContainer, ReferenceLine,
-} from 'recharts';
-
-function useSimData() {
-  const [data, setData] = useState([]);
-  const tRef = useRef(0);
-  const baselineRef = useRef(247500 + Math.random() * 1000);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      tRef.current += 0.15;
-      const t = tRef.current;
-      const base = baselineRef.current;
-      const noise =
-        Math.sin(t * 0.31) * 280 +
-        Math.sin(t * 0.13) * 520 +
-        Math.sin(t * 0.07) * 180 +
-        (Math.random() - 0.5) * 200;
-      const value = base + noise;
-      const ts = new Date().toLocaleTimeString('en-IN', {
-        hour: '2-digit', minute: '2-digit', hour12: false,
-      });
-      setData(prev => [...prev, { ts, value }].slice(-120));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-  return { data, baseline: baselineRef.current };
-}
-
-// Number of distinct live readings averaged to form the baseline.
-const CALIBRATION_READINGS = 500;
-
-// Combine the raw 3-axis accelerometer reading into a single intensity magnitude.
-const toMagnitude = (item) => {
-  const x = item.x + 19000;
-  const y = item.y;
-  const z = item.z - 240000;
-  return Math.sqrt(x ** 2 + y ** 2 + z ** 2);
-};
-
-function useLiveProcessed() {
-  const raw = UseLiveData();
-  const [baseline, setBaseline] = useState(null);
-  // `raw` is only a short rolling window, so the same reading shows up in many
-  // consecutive renders. Track what has been counted by timestamp so each
-  // reading contributes to the baseline exactly once.
-  const calibRef = useRef({ seen: new Set(), values: [] });
-
-  const flatData = (raw || []).flat().map(item => ({
-    ts: new Date(item.ts).toLocaleTimeString('en-IN', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-    }),
-    value: toMagnitude(item),
-  }));
-
-  useEffect(() => {
-    if (baseline !== null) return;
-    const calib = calibRef.current;
-    for (const item of (raw || []).flat()) {
-      if (calib.seen.has(item.ts)) continue;
-      calib.seen.add(item.ts);
-      calib.values.push(toMagnitude(item));
-    }
-    if (calib.values.length >= CALIBRATION_READINGS) {
-      const sample = calib.values.slice(0, CALIBRATION_READINGS);
-      setBaseline(sample.reduce((a, v) => a + v, 0) / sample.length);
-    }
-  }, [raw, baseline]);
-
-  return { data: flatData, baseline };
-}
-
-function CustomTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className={styles.tooltip}>
-      <div className={styles.tooltipTime}>{payload[0]?.payload?.ts}</div>
-      <div className={styles.tooltipVal}>
-        {Math.round(payload[0]?.value).toLocaleString('en-IN')}
-        <span> u</span>
-      </div>
-    </div>
-  );
-}
+import SeismoChart from '@/components/SeismoChart';
+import useDeviceSeries from '@/lib/useDeviceSeries';
+import useAlertSound from '@/lib/useAlertSound';
+import { ALERT_THRESHOLD, hasRecentBreach } from '@/lib/detection';
+import { getDevice, SITE } from '@/lib/devices';
 
 export default function DevicePage({ params }) {
   const { id } = use(params);
   const meta = getDevice(id);
-  // Which source feeds the chart. Labels in the UI treat every device as live.
-  const usesFirebaseFeed = hasFirebaseFeed(meta);
-  const liveResult = useLiveProcessed();
-  const simResult = useSimData();
-  const { data, baseline } = usesFirebaseFeed ? liveResult : {
-    data: simResult.data,
-    baseline: simResult.baseline,
-  };
+  // Readings come from whichever source the device is configured with
+  // (see `feed` in lib/devices.js); the labels treat every device as live.
+  const { data, baseline } = useDeviceSeries(meta);
   const [isAlert, setIsAlert] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const soundRef = useRef(null);
   const alertTimeRef = useRef(null);
+  const playAlertSound = useAlertSound();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      soundRef.current = new Howl({ src: ['/sounds/beep-warning-1.mp3'] });
-      const unlock = () => {
-        if (window.Howler?.ctx?.state === 'suspended') window.Howler.ctx.resume();
-        document.removeEventListener('click', unlock);
-      };
-      document.addEventListener('click', unlock);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!baseline || !data.length) return;
-    const recent = data.slice(-10);
-    const triggered = recent.some(
-      d => d.value > baseline + 5000 || d.value < baseline - 5000
-    );
-    if (triggered && !alertDismissed) {
+    if (!data.length) return;
+    if (hasRecentBreach(data, baseline) && !alertDismissed) {
       setIsAlert(true);
-      soundRef.current?.play();
+      playAlertSound();
       clearTimeout(alertTimeRef.current);
       alertTimeRef.current = setTimeout(() => {
         setIsAlert(false);
@@ -170,7 +67,7 @@ export default function DevicePage({ params }) {
             <div>
               <div className={styles.alertBannerTitle}>Seismic Anomaly Detected</div>
               <div className={styles.alertBannerSub}>
-                {id} — Reading exceeds baseline threshold by ±5,000 units
+                {id} — Reading exceeds baseline threshold by ±{ALERT_THRESHOLD.toLocaleString('en-IN')} units
               </div>
             </div>
           </div>
@@ -296,7 +193,7 @@ export default function DevicePage({ params }) {
                 {
                   icon: 'ti-alert-triangle',
                   title: 'When alerts trigger',
-                  desc: 'If a reading rises or drops more than 5,000 units from baseline, an anomaly is flagged. This may indicate seismic activity, and operators are alerted immediately.',
+                  desc: `If a reading rises or drops more than ${ALERT_THRESHOLD.toLocaleString('en-IN')} units from baseline, an anomaly is flagged. This may indicate seismic activity, and operators are alerted immediately.`,
                 },
                 {
                   icon: 'ti-clock',
@@ -354,69 +251,7 @@ export default function DevicePage({ params }) {
             </div>
 
             <div className={styles.chartWrap}>
-              {data.length === 0 ? (
-                <div className={styles.waiting}>
-                  <i className="ti ti-wave-sine" aria-hidden="true" />
-                  <span>Waiting for data...</span>
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-                    <XAxis
-                      dataKey="ts"
-                      tick={{ fontSize: 11, fontFamily: 'Space Mono', fill: '#5A6880' }}
-                      interval="preserveStartEnd"
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      domain={baseline
-                        ? [Math.floor(baseline) - 6000, Math.floor(baseline) + 6000]
-                        : ['auto', 'auto']}
-                      tick={{ fontSize: 11, fontFamily: 'Space Mono', fill: '#5A6880' }}
-                      axisLine={false}
-                      tickLine={false}
-                      width={72}
-                      tickFormatter={v => (v / 1000).toFixed(0) + 'k'}
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    {baseline && (
-                      <ReferenceLine
-                        y={baseline}
-                        stroke="rgba(21,87,255,0.25)"
-                        strokeDasharray="6 4"
-                        strokeWidth={1.5}
-                        label={{ value: 'BASELINE', position: 'insideTopRight', fontSize: 9, fontFamily: 'Space Mono', fill: 'rgba(21,87,255,0.4)' }}
-                      />
-                    )}
-                    {baseline && (
-                      <ReferenceLine
-                        y={baseline + 5000}
-                        stroke="rgba(220,38,38,0.2)"
-                        strokeDasharray="4 4"
-                        strokeWidth={1}
-                      />
-                    )}
-                    {baseline && (
-                      <ReferenceLine
-                        y={baseline - 5000}
-                        stroke="rgba(220,38,38,0.2)"
-                        strokeDasharray="4 4"
-                        strokeWidth={1}
-                      />
-                    )}
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke={isAlert ? '#DC2626' : '#1557FF'}
-                      dot={false}
-                      strokeWidth={2}
-                      isAnimationActive={false}
-                      name="Vibration Intensity"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
+              <SeismoChart data={data} baseline={baseline} isAlert={isAlert} />
             </div>
 
             <div className={styles.graphFooter}>

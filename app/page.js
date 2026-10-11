@@ -75,6 +75,7 @@ export default function HomePage() {
           <a href="#about">About</a>
           <a href="#device">Technology</a>
           <a href="#network">Network</a>
+          <a href="/triangulation">Triangulation</a>
           <a href="/contact">Contact</a>
         </div>
 

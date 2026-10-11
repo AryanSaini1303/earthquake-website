@@ -21,12 +21,16 @@ const currentPath = () => {
 
 const isFresh = (item, now) => now - new Date(item.ts).getTime() <= WINDOW_MS;
 
-const useLiveData = () => {
+// `enabled` lets a caller skip the Firebase listener entirely (for devices that
+// don't stream real readings), so no connection is opened for nothing.
+const useLiveData = (enabled = true) => {
   const [data, setData] = useState([]);
 
   // Subscribe to the current hour's node, and move to the next one when the hour
   // (or the day) rolls over so a long-open dashboard keeps receiving data.
   useEffect(() => {
+    if (!enabled) return;
+
     let subscribedPath = null;
     let unsubscribe = null;
 
@@ -55,9 +59,11 @@ const useLiveData = () => {
       clearInterval(timer);
       unsubscribe?.();
     };
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const interval = setInterval(() => {
       // Always returns a fresh array: this tick also re-renders the dashboard,
       // which keeps its on-screen clock moving even when no data is arriving.
@@ -67,7 +73,7 @@ const useLiveData = () => {
       });
     }, PRUNE_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, []);
+  }, [enabled]);
 
   return data;
 };

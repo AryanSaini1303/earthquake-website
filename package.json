@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "cloudflared": "^0.7.0",
     "firebase": "^11.9.1",
     "firebase-admin": "^13.4.0",
     "howler": "^2.2.4",

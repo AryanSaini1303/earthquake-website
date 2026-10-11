@@ -3,61 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import styles from './page.module.css';
-
-const DEVICES = [
-  {
-    id: 'EQ-Alert_Demo',
-    lat: 26.9442,
-    lng: 80.9402,
-    location: 'Lucknow, India',
-    dept: 'Office',
-    coords: '26.9442°N, 80.9402°E',
-    status: 'live',
-    statusLabel: 'Live',
-    detail: 'Transmitting · All systems nominal',
-    health: 'Nominal',
-    dataRate: '500ms',
-  },
-  {
-    id: 'EQ-Alert_001',
-    lat: 27.5743,
-    lng: 81.5817,
-    location: 'Bahraich, Uttar Pradesh',
-    dept: 'Zone IV Seismic Region',
-    coords: '27.5743°N, 81.5817°E',
-    status: 'live',
-    statusLabel: 'Live',
-    detail: 'Transmitting · All systems nominal',
-    health: 'Nominal',
-    dataRate: 'N/A',
-  },
-  {
-    id: 'EQ-Alert_002',
-    lat: 21.1500,
-    lng: 72.8620,
-    location: 'Dindoli, Surat, Gujarat',
-    dept: 'Himalayan Foothills Zone',
-    coords: '21.1500°N, 72.8620°E',
-    status: 'live',
-    statusLabel: 'Live',
-    detail: 'Transmitting · All systems nominal',
-    health: 'Nominal',
-    dataRate: 'N/A',
-  },
-  {
-    id: 'EQ-Alert_003',
-    lat: 26.4555,
-    lng: 81.6153,
-    location: 'Jagdeeshpur, Uttar Pradesh',
-    dept: 'High-Risk Seismic Zone V',
-    coords: '26.4555°N, 81.6153°E',
-    status: 'live',
-    statusLabel: 'Live',
-    detail: 'Transmitting · All systems nominal',
-    health: 'Nominal',
-    dataRate: 'N/A',
-  },
-];
+import { DEVICES, LIVE_DEVICES, SIM_DEVICES } from '@/lib/devices';
 
 const MapComponent = dynamic(() => import('./MapComponent'), { ssr: false });
 
@@ -75,7 +21,7 @@ export default function MapPage() {
           </div>
           <div>
             <div className={styles.logoName}>Inventis<span>Labs</span></div>
-            <div className={styles.logoSub}>IIT ROORKEE INCUBATED</div>
+            <div className={styles.logoSub}>IIIT LUCKNOW INCUBATED</div>
           </div>
         </Link>
 
@@ -100,7 +46,13 @@ export default function MapPage() {
           <div className={styles.sidebarHeader}>
             <div className={styles.sidebarLabel}>Device Network</div>
             <div className={styles.sidebarCount}>
-              <span className={styles.countLive}>4 Live</span>
+              <span className={styles.countLive}>{LIVE_DEVICES.length} Live</span>
+              {SIM_DEVICES.length > 0 && (
+                <>
+                  <span className={styles.countDot} />
+                  <span className={styles.countSim}>{SIM_DEVICES.length} Simulated</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -136,6 +88,10 @@ export default function MapPage() {
             <div className={styles.legendItem}>
               <span className={styles.legendDotLive} />
               <span>Live device — transmitting</span>
+            </div>
+            <div className={styles.legendItem}>
+              <span className={styles.legendDotSim} />
+              <span>Simulated device — demo feed</span>
             </div>
           </div>
         </aside>

@@ -3,45 +3,10 @@
 import styles from "./page.module.css";
 import Link from 'next/link';
 import { useEffect, useRef } from "react";
+import { DEVICES, LIVE_DEVICES, SITE } from "@/lib/devices";
 
-const DEVICES = [
-  {
-    id: "EQ-Alert_Demo",
-    location: "Lucknow, India",
-    dept: "Office",
-    coords: "26.9442°N, 80.9402°E",
-    status: "live",
-    statusLabel: "Live",
-    detail: "Transmitting · All systems nominal",
-  },
-  {
-    id: "EQ-Alert_001",
-    location: "Bahraich, Uttar Pradesh",
-    dept: "Zone IV Seismic Region",
-    coords: "27.5743°N, 81.5817°E",
-    status: "live",
-    statusLabel: "Live",
-    detail: "Transmitting · All systems nominal",
-  },
-  {
-    id: "EQ-Alert_002",
-    location: "Dindoli, Surat, Gujarat",
-    dept: "Himalayan Foothills Zone",
-    coords: "21.1500°N, 72.8620°E",
-    status: "live",
-    statusLabel: "Live",
-    detail: "Transmitting · All systems nominal",
-  },
-  {
-    id: "EQ-Alert_003",
-    location: "Jagdeeshpur, Uttar Pradesh",
-    dept: "High-Risk Seismic Zone V",
-    coords: "26.4555°N, 81.6153°E",
-    status: "live",
-    statusLabel: "Live",
-    detail: "Transmitting · All systems nominal",
-  },
-];
+// The hero status card showcases the first genuinely live device.
+const FEATURED_DEVICE = LIVE_DEVICES[0] ?? DEVICES[0];
 
 const HOW_STEPS = [
   {
@@ -190,9 +155,8 @@ export default function HomePage() {
               <div>
                 <div className={styles.iitTitle}>Incubated at IIIT Lucknow</div>
                 <div className={styles.iitSub}>
-                  India&apos;s oldest technical institution. InventisLabs is
-                  backed by IIIT Lucknow&apos;s incubation programme — validating
-                  the science behind EEWS.
+                  InventisLabs is backed by IIIT Lucknow&apos;s incubation
+                  programme — validating the science behind EEWS.
                 </div>
               </div>
             </div>
@@ -200,7 +164,7 @@ export default function HomePage() {
             <div className={styles.statusCard}>
               <div className={styles.statusHeader}>
                 <span className={styles.statusTitle}>
-                  EQ-Alert_001 // Device Status
+                  {FEATURED_DEVICE.id} // Device Status
                 </span>
                 <span className={styles.liveBadge}>
                   <span className={styles.liveDot} />
@@ -212,7 +176,7 @@ export default function HomePage() {
                   {
                     icon: "ti-map-pin",
                     key: "Location",
-                    val: "Bahraich, Uttar Pradesh",
+                    val: FEATURED_DEVICE.location,
                     cls: styles.valBlue,
                   },
                   {
@@ -224,13 +188,13 @@ export default function HomePage() {
                   {
                     icon: "ti-shield-check",
                     key: "Health",
-                    val: "Nominal",
+                    val: FEATURED_DEVICE.health,
                     cls: styles.valGreen,
                   },
                   {
                     icon: "ti-antenna",
                     key: "Data Rate",
-                    val: "500ms intervals",
+                    val: `${FEATURED_DEVICE.dataRate} intervals`,
                     cls: "",
                   },
                 ].map((row, i) => (
@@ -252,7 +216,7 @@ export default function HomePage() {
 
             <div className={styles.statsRow}>
               {[
-                { n: "15", u: "sec", l: "Warning lead time" },
+                { n: String(SITE.leadTimeSec), u: "sec", l: "Warning lead time" },
                 { n: "24", u: "/7", l: "Continuous monitoring" },
                 { n: "3", u: "-axis", l: "Accelerometer readings" },
               ].map((s, i) => (
@@ -289,8 +253,7 @@ export default function HomePage() {
               </h2>
               <p className={styles.aboutText}>
                 InventisLabs is a deep-tech startup incubated at the Indian
-                Institute of Technology, Roorkee — one of India&apos;s foremost
-                institutions for engineering and seismological research.
+                Institute of Information Technology, Lucknow ({SITE.incubator}).
               </p>
               <p className={styles.aboutText}>
                 We build innovative, research-driven solutions to real-world
@@ -497,8 +460,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className={styles.footerText}>
-            © 2025 InventisLabs · EQ-Alert v1.0 · India&apos;s first Indigenous
-            Earthquake Early Warning System
+            © {new Date().getFullYear()} InventisLabs · EQ-Alert v1.0 · India&apos;s
+            first Indigenous Earthquake Early Warning System
           </div>
         </div>
       </footer>

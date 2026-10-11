@@ -67,7 +67,7 @@ export default function ContactPage() {
           </div>
           <div>
             <div className={styles.logoName}>Inventis<span>Labs</span></div>
-            <div className={styles.logoSub}>IIT ROORKEE INCUBATED</div>
+            <div className={styles.logoSub}>IIIT LUCKNOW INCUBATED</div>
           </div>
         </Link>
 
@@ -104,7 +104,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <div className={styles.contactCardTitle}>InventisLabs</div>
-                <div className={styles.contactCardSub}>Incubated at IIT Roorkee</div>
+                <div className={styles.contactCardSub}>Incubated at IIIT Lucknow</div>
               </div>
             </div>
             <div className={styles.contactCard}>
@@ -112,8 +112,8 @@ export default function ContactPage() {
                 <i className="ti ti-map-pin" aria-hidden="true" />
               </div>
               <div>
-                <div className={styles.contactCardTitle}>IIT Roorkee Campus</div>
-                <div className={styles.contactCardSub}>Roorkee, Uttarakhand — 247667</div>
+                <div className={styles.contactCardTitle}>IIIT Lucknow Campus</div>
+                <div className={styles.contactCardSub}>Lucknow, Uttar Pradesh</div>
               </div>
             </div>
             <div className={styles.contactCard}>

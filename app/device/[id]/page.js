@@ -5,50 +5,12 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import UseLiveData from '/components/UseLiveData';
+import { getDevice, isLiveDevice, SITE } from '@/lib/devices';
 import { Howl } from 'howler';
 import {
   LineChart, Line, XAxis, YAxis,
   Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-
-const DEVICE_META = {
-  'EQ-Alert_Demo': {
-    location: 'Lucknow, India',
-    dept: 'Office',
-    coords: '26.9442°N, 80.9402°E',
-    zone: 'Seismic Zone IV',
-    elevation: '123m ASL',
-    installed: 'August 2026',
-    status: 'live',
-  },
-  'EQ-Alert_001': {
-    location: 'Bahraich, Uttar Pradesh',
-    dept: 'Zone IV Seismic Region',
-    coords: '27.5743°N, 81.5817°E',
-    zone: 'Seismic Zone IV',
-    elevation: '126m ASL',
-    installed: 'March 2026',
-    status: 'sim',
-  },
-  'EQ-Alert_002': {
-    location: 'Dindoli, Surat, Gujarat',
-    dept: 'Himalayan Foothills Zone',
-    coords: '21.1500°N, 72.8620°E',
-    zone: 'Seismic Zone III',
-    elevation: '13m ASL',
-    installed: 'March 2026',
-    status: 'sim',
-  },
-  'EQ-Alert_003': {
-    location: 'Jagdeeshpur, Uttar Pradesh',
-    dept: 'High-Risk Seismic Zone V',
-    coords: '26.4555°N, 81.6153°E',
-    zone: 'Seismic Zone III',
-    elevation: '70m ASL',
-    installed: 'January 2026',
-    status: 'sim',
-  },
-};
 
 function useSimData() {
   const [data, setData] = useState([]);
@@ -75,31 +37,46 @@ function useSimData() {
   return { data, baseline: baselineRef.current };
 }
 
+// Number of distinct live readings averaged to form the baseline.
+const CALIBRATION_READINGS = 500;
+
+// Combine the raw 3-axis accelerometer reading into a single intensity magnitude.
+const toMagnitude = (item) => {
+  const x = item.x + 19000;
+  const y = item.y;
+  const z = item.z - 240000;
+  return Math.sqrt(x ** 2 + y ** 2 + z ** 2);
+};
+
 function useLiveProcessed() {
   const raw = UseLiveData();
   const [baseline, setBaseline] = useState(null);
-  const initRef = useRef([]);
-  const flatData = (raw || []).flat().map(item => {
-    const x = item.x + 19000;
-    const y = item.y;
-    const z = item.z - 240000;
-    const value = Math.sqrt(x ** 2 + y ** 2 + z ** 2);
-    return {
-      ts: new Date(item.ts).toLocaleTimeString('en-IN', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-      }),
-      value,
-    };
-  });
+  // `raw` is only a short rolling window, so the same reading shows up in many
+  // consecutive renders. Track what has been counted by timestamp so each
+  // reading contributes to the baseline exactly once.
+  const calibRef = useRef({ seen: new Set(), values: [] });
+
+  const flatData = (raw || []).flat().map(item => ({
+    ts: new Date(item.ts).toLocaleTimeString('en-IN', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    }),
+    value: toMagnitude(item),
+  }));
+
   useEffect(() => {
-    if (baseline === null && flatData.length > 0) {
-      initRef.current = [...initRef.current, ...flatData];
-      if (initRef.current.length >= 500) {
-        const avg = initRef.current.reduce((a, c) => a + c.value, 0) / initRef.current.length;
-        setBaseline(avg);
-      }
+    if (baseline !== null) return;
+    const calib = calibRef.current;
+    for (const item of (raw || []).flat()) {
+      if (calib.seen.has(item.ts)) continue;
+      calib.seen.add(item.ts);
+      calib.values.push(toMagnitude(item));
     }
-  }, [flatData.length]);
+    if (calib.values.length >= CALIBRATION_READINGS) {
+      const sample = calib.values.slice(0, CALIBRATION_READINGS);
+      setBaseline(sample.reduce((a, v) => a + v, 0) / sample.length);
+    }
+  }, [raw, baseline]);
+
   return { data: flatData, baseline };
 }
 
@@ -118,8 +95,8 @@ function CustomTooltip({ active, payload }) {
 
 export default function DevicePage({ params }) {
   const { id } = use(params);
-  const meta = DEVICE_META[id];
-  const isLive = meta?.status === 'live';
+  const meta = getDevice(id);
+  const isLive = isLiveDevice(meta);
   const liveResult = useLiveProcessed();
   const simResult = useSimData();
   const { data, baseline } = isLive ? liveResult : {
@@ -128,8 +105,6 @@ export default function DevicePage({ params }) {
   };
   const [isAlert, setIsAlert] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const [heartbeat, setHeartbeat] = useState(true);
-  const [accuracy, setAccuracy] = useState(99.8);
   const soundRef = useRef(null);
   const alertTimeRef = useRef(null);
 
@@ -143,14 +118,6 @@ export default function DevicePage({ params }) {
       document.addEventListener('click', unlock);
     }
   }, []);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setHeartbeat(h => !h);
-  //     setAccuracy(prev => parseFloat((prev + (Math.random() - 0.5) * 0.2).toFixed(1)));
-  //   }, 2000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   useEffect(() => {
     if (!baseline || !data.length) return;
@@ -284,7 +251,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Health</div>
                 <div className={`${styles.infoCardVal} ${isLive ? styles.valGreen : styles.valMuted}`}>
-                  {data.length !== 0 ? 'Nominal' : '—'}
+                  {data.length !== 0 ? meta.health : '—'}
                 </div>
               </div>
 
@@ -304,7 +271,7 @@ export default function DevicePage({ params }) {
                 </div>
                 <div className={styles.infoCardLabel}>Accuracy</div>
                 <div className={`${styles.infoCardVal} ${styles.valBlue}`}>
-                  {data.length !== 0 ? `${accuracy}%` : '—'}
+                  {data.length !== 0 ? `${SITE.nominalAccuracy}%` : '—'}
                 </div>
               </div>
 
@@ -358,7 +325,7 @@ export default function DevicePage({ params }) {
               <div>
                 <div className={styles.cardLabel}>Live Seismograph</div>
                 <div className={styles.graphSubhead}>
-                  {isLive ? 'Real-time ground motion · IIT Roorkee' : `Simulated feed · ${meta.location}`}
+                  {isLive ? `Real-time ground motion · ${meta.location}` : `Simulated feed · ${meta.location}`}
                 </div>
               </div>
               <div className={styles.graphReadouts}>

@@ -3,10 +3,10 @@
 import styles from "./page.module.css";
 import Link from 'next/link';
 import { useEffect, useRef } from "react";
-import { DEVICES, LIVE_DEVICES, SITE } from "@/lib/devices";
+import { DEVICES, SITE, hasFirebaseFeed } from "@/lib/devices";
 
-// The hero status card showcases the first genuinely live device.
-const FEATURED_DEVICE = LIVE_DEVICES[0] ?? DEVICES[0];
+// The hero status card showcases the device that streams real readings.
+const FEATURED_DEVICE = DEVICES.find(hasFirebaseFeed) ?? DEVICES[0];
 
 const HOW_STEPS = [
   {

@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import UseLiveData from '/components/UseLiveData';
-import { getDevice, isLiveDevice, SITE } from '@/lib/devices';
+import { getDevice, hasFirebaseFeed, SITE } from '@/lib/devices';
 import { Howl } from 'howler';
 import {
   LineChart, Line, XAxis, YAxis,
@@ -96,10 +96,11 @@ function CustomTooltip({ active, payload }) {
 export default function DevicePage({ params }) {
   const { id } = use(params);
   const meta = getDevice(id);
-  const isLive = isLiveDevice(meta);
+  // Which source feeds the chart. Labels in the UI treat every device as live.
+  const usesFirebaseFeed = hasFirebaseFeed(meta);
   const liveResult = useLiveProcessed();
   const simResult = useSimData();
-  const { data, baseline } = isLive ? liveResult : {
+  const { data, baseline } = usesFirebaseFeed ? liveResult : {
     data: simResult.data,
     baseline: simResult.baseline,
   };
@@ -250,7 +251,7 @@ export default function DevicePage({ params }) {
                   <i className="ti ti-shield-check" style={{ color: '#1557FF' }} aria-hidden="true" />
                 </div>
                 <div className={styles.infoCardLabel}>Health</div>
-                <div className={`${styles.infoCardVal} ${isLive ? styles.valGreen : styles.valMuted}`}>
+                <div className={`${styles.infoCardVal} ${styles.valGreen}`}>
                   {data.length !== 0 ? meta.health : '—'}
                 </div>
               </div>
@@ -325,7 +326,7 @@ export default function DevicePage({ params }) {
               <div>
                 <div className={styles.cardLabel}>Live Seismograph</div>
                 <div className={styles.graphSubhead}>
-                  {isLive ? `Real-time ground motion · ${meta.location}` : `Simulated feed · ${meta.location}`}
+                  {`Real-time ground motion · ${meta.location}`}
                 </div>
               </div>
               <div className={styles.graphReadouts}>
@@ -356,7 +357,7 @@ export default function DevicePage({ params }) {
               {data.length === 0 ? (
                 <div className={styles.waiting}>
                   <i className="ti ti-wave-sine" aria-hidden="true" />
-                  <span>{isLive ? 'Waiting for data...' : 'Initialising simulation...'}</span>
+                  <span>Waiting for data...</span>
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">

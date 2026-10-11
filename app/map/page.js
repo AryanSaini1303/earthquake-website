@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { DEVICES, LIVE_DEVICES, SIM_DEVICES } from '@/lib/devices';
+import { DEVICES } from '@/lib/devices';
 
 const MapComponent = dynamic(() => import('./MapComponent'), { ssr: false });
 
@@ -46,13 +46,7 @@ export default function MapPage() {
           <div className={styles.sidebarHeader}>
             <div className={styles.sidebarLabel}>Device Network</div>
             <div className={styles.sidebarCount}>
-              <span className={styles.countLive}>{LIVE_DEVICES.length} Live</span>
-              {SIM_DEVICES.length > 0 && (
-                <>
-                  <span className={styles.countDot} />
-                  <span className={styles.countSim}>{SIM_DEVICES.length} Simulated</span>
-                </>
-              )}
+              <span className={styles.countLive}>{DEVICES.length} Live</span>
             </div>
           </div>
 
@@ -88,10 +82,6 @@ export default function MapPage() {
             <div className={styles.legendItem}>
               <span className={styles.legendDotLive} />
               <span>Live device — transmitting</span>
-            </div>
-            <div className={styles.legendItem}>
-              <span className={styles.legendDotSim} />
-              <span>Simulated device — demo feed</span>
             </div>
           </div>
         </aside>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { DEVICES, hasFirebaseFeed } from '@/lib/devices';
-import { sendSpike } from '@/lib/spikeBus';
+import { sendSpike, spikeMode } from '@/lib/spikeBus';
 import { ALERT_THRESHOLD } from '@/lib/detection';
 import styles from './page.module.css';
 
@@ -21,17 +21,23 @@ export default function SpikePage() {
   // { [deviceId]: { count, lastAt } }
   const [sent, setSent] = useState({});
   const [flashing, setFlashing] = useState({});
-  const [supported, setSupported] = useState(true);
+  const [errors, setErrors] = useState({});
+  const [mode, setMode] = useState(null); // known only in the browser, so set after mount
   const timers = useRef({});
 
   useEffect(() => {
-    setSupported(typeof BroadcastChannel !== 'undefined');
+    setMode(spikeMode());
     const pending = timers.current;
     return () => Object.values(pending).forEach(clearTimeout);
   }, []);
 
-  const fire = (id) => {
-    if (!sendSpike(id)) return;
+  const fire = async (id) => {
+    setErrors((prev) => ({ ...prev, [id]: null }));
+    const result = await sendSpike(id);
+    if (!result.ok) {
+      setErrors((prev) => ({ ...prev, [id]: result.error }));
+      return;
+    }
     const at = Date.now();
     setSent((prev) => ({ ...prev, [id]: { count: (prev[id]?.count ?? 0) + 1, lastAt: at } }));
     setFlashing((prev) => ({ ...prev, [id]: true }));
@@ -63,16 +69,28 @@ export default function SpikePage() {
           <span className={styles.titleAccent}> on any device</span>
         </h1>
         <p className={styles.desc}>
-          Keep a device&rsquo;s graph open in another tab of this browser, then press its
-          button. The simulated feed gets a sharp shake that crosses the ±
+          Keep a device&rsquo;s graph open anywhere (another tab, another browser, another
+          computer), then press its button. The simulated feed gets a sharp shake that crosses the ±
           {ALERT_THRESHOLD.toLocaleString('en-IN')}-unit alert threshold and fades out over a
           few seconds. Spiking three devices together sets off the triangulation alert.
         </p>
 
-        {!supported && (
-          <div className={styles.warn} role="alert">
-            This browser can&rsquo;t pass messages between tabs, so spikes won&rsquo;t reach
-            the graphs.
+        {mode === 'supabase' && (
+          <div className={styles.status} data-testid="transport">
+            <span className={styles.statusDot} />
+            Connected through Supabase: spikes reach graphs in any browser.
+          </div>
+        )}
+        {mode === 'browser' && (
+          <div className={styles.warn} role="status" data-testid="transport">
+            Supabase isn&rsquo;t configured, so spikes only reach other tabs of this browser. Add{' '}
+            <code>NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
+            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to <code>.env.local</code> and restart.
+          </div>
+        )}
+        {mode === 'none' && (
+          <div className={styles.warn} role="alert" data-testid="transport">
+            Spikes can&rsquo;t be delivered from this browser.
           </div>
         )}
 
@@ -98,12 +116,18 @@ export default function SpikePage() {
                 <button
                   type="button"
                   className={`${styles.spikeBtn} ${isFlashing ? styles.spikeBtnSent : ''}`}
-                  disabled={live || !supported}
+                  disabled={live || mode === null || mode === 'none'}
                   onClick={() => fire(d.id)}
                 >
                   <i className={`ti ${isFlashing ? 'ti-check' : 'ti-bolt'}`} aria-hidden="true" />
                   {isFlashing ? 'Spike sent' : 'Generate spike'}
                 </button>
+
+                {errors[d.id] && (
+                  <div className={styles.cardError} role="alert">
+                    Couldn&rsquo;t send: {errors[d.id]}
+                  </div>
+                )}
 
                 <div className={styles.cardFoot}>
                   {live ? (
